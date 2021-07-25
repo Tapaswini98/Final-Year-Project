@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <%- include("./partials/header") %>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<div class="wrapper">
+  <%- include("./partials/navbar") %>
+  <%- include("./partials/sidebar") %>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Info boxes -->
+        <div class="row">
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box">
+              <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-water"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">ESR Level</span>
+                <span class="info-box-number">
+                  5.358
+                  <small>Mtr</small>
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-pink elevation-1"><i class="fas fa-tachometer-alt"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Inlet Pressure</span>
+                <span class="info-box-number">4.205
+                  <small>Kg/Cm<sup>2</sup></small>
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-snowflake"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Water Meter</span>
+                <span class="info-box-number">57.232
+                  <small>M<sup>2</sup>/hr</small></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-tachometer-alt"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Outlet Pressure</span>
+                <span class="info-box-number">1.255
+                  <small>Kg/Cm<sup>2</sup></small></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-flask"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Cl<sub>2</sub></span>
+                <span class="info-box-number">0.195
+                  <small>PPM</small></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-arrow-circle-down"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Excess 0%</span>
+                <span class="info-box-number">0
+                  <small>M<sup>2</sup>/hr</small></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <!-- <div class="row">
+                  <div class="col-md-10"> -->
+                <% if(role =="ADMIN"){ %>
+                <select id="dynamicOption" class="form-control">
+                      <!-- <option>A</option>
+                      <option>B</option> -->
+                </select> 
+                 <% }else{ %>
+                 
+                 <h5 class="card-title" id="chartHead"></h5>
+                 <div class="card-tools">
+                  <button
+                    type="button"
+                    class="btn btn-tool"
+                    data-card-widget="collapse"
+                  >
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-tool"
+                    data-card-widget="remove"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+               <%} %>
+                  <!-- <h1><%= userData.plcs%></h1>           -->
+                
+              </div>
+              <div class="card-body">
+                <div id="map">
+                  <iframe style="width: 100%;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30029.880858795597!2d85.80409032421781!3d19.8088254969761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19c4180256e495%3A0x496a9d8b30c1fad7!2sPuri%2C%20Odisha!5e0!3m2!1sen!2sin!4v1615198103055!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+              </div>
+            </div>   
+           </div>  
+      </div>
+      <!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- <h1><%= userData.plcs %></h1> -->
+ 
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.1.0-rc
+    </div>
+  </footer>
+</div>
+./wrapper -->
+<script>
+  var status = `<%= status1 %>`
+  var role =`<%= role %>`
+  //alert(status);
+  console.log(plc)
+  var user ={};
+  if(status =="true"){
+    //alert(role)
+    if(role =="ADMIN"){
+      //alert(role)
+      user = {
+                name: `<%= userData.name %>`,
+                plcs: `<%- userData.plcs %>`,
+                email: `<%= userData.email %>`,
+                phoneNo: `<%= userData.phoneNo %>`,
+                role :role
+       }
+    }
+    else{
+      user = {
+                name: `<%= userData.name %>`,
+                plcId: `<%= userData.plcId %>`,
+                location:`<%= userData.location %>`,
+                lat: `<%= userData.lat %>`,
+                lng: `<%= userData.lng %>`,
+                email: `<%= userData.email %>`,
+                phoneNo: `<%= userData.phoneNo %>`,
+                role :role
+
+    }
+    
+  }
+    sessionStorage.setItem('user',JSON.stringify(user));
+    document.getElementById("userName").innerText=user.name;
+    console.log(user,status);
+    if(role=="ADMIN"){
+      let option = document.getElementById("dynamicOption");
+    let sessionData = JSON.parse(JSON.parse(sessionStorage.getItem('user')).plcs);
+    console.log(sessionData);
+    let innerHTML = "";
+    sessionData.forEach((a)=>{
+      innerHTML += `<option value="${a.plcId}">${a.location}</option>`
+    })
+    option.innerHTML =innerHTML;
+    }
+    else{
+      document.getElementById("chartHead").innerText =  ((JSON.parse(sessionStorage.getItem(
+      "user"))).location).toUpperCase() + "Distribution Network"
+    }
+    
+ }else{
+  document.getElementById("chartHead").innerText =  ((JSON.parse(sessionStorage.getItem(
+      "user"))).location).toUpperCase() + " Distribution Network"
+    console.log("Other")
+  } 
+  
+  
+var map;
+var InforObj = [];
+var centerCords = {
+    lat: 19.8135,
+    lng: 85.8312
+};
+var markersOnMap = [{
+        placeName: "Baliapanda",
+        LatLng: [{
+            lat: 19.7881,
+            lng: 85.7979
+        }]
+    },
+    {
+        placeName: "Masanichandi",
+        LatLng: [{
+            lat: 85.8312,
+            lng: 85.8276814
+        }]
+    }
+];
+
+// window.onload = function () {
+//     initMap();
+// };
+
+// function addMarker() {
+//     for (var i = 0; i < markersOnMap.length; i++) {
+//         var contentString = '<div id="content"><h1>' + markersOnMap[i].placeName +
+//             '</h1><p>Lorem ipsum dolor sit amet, vix mutat posse suscipit id, vel ea tantas omittam detraxit.</p></div>';
+
+//         const marker = new google.maps.Marker({
+//             position: markersOnMap[i].LatLng[0],
+//             map: map
+//         });
+
+//         const infowindow = new google.maps.InfoWindow({
+//             content: contentString,
+//             maxWidth: 200
+//         });
+
+//         marker.addListener('click', function () {
+//             closeOtherInfo();
+//             infowindow.open(marker.get('map'), marker);
+//             InforObj[0] = infowindow;
+//         });
+//         // marker.addListener('mouseover', function () {
+//         //     closeOtherInfo();
+//         //     infowindow.open(marker.get('map'), marker);
+//         //     InforObj[0] = infowindow;
+//         // });
+//         // marker.addListener('mouseout', function () {
+//         //     closeOtherInfo();
+//         //     infowindow.close();
+//         //     InforObj[0] = infowindow;
+//         // });
+//     }
+// }
+
+// function closeOtherInfo() {
+//     if (InforObj.length > 0) {
+//         /* detach the info-window from the marker ... undocumented in the API docs */
+//         InforObj[0].set("marker", null);
+//         /* and close it */
+//         InforObj[0].close();
+//         /* blank the array */
+//         InforObj.length = 0;
+//     }
+// }
+
+// function initMap() {
+//     map = new google.maps.Map(document.getElementById('map'), {
+//         zoom: 4,
+//         center: centerCords
+//     });
+//     addMarker();
+// }
+</script>
+<!-- <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgPOMK7HvaTkmGTnl36p6pwp5qgKwF1-4&callback=initMap">
+</script> -->
+<%- include("./partials/footer") %>
+</body>
+</html>

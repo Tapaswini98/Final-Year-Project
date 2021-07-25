@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Montaga&family=Montserrat:wght@700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', serif;
+    color: blanchedalmond;
+}
+
+body{
+    background-image: url(../images/water1.jpg);
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    padding: 0 10px;
+}
+
+.wrapper{
+    max-width: 500px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    margin: 30px auto;
+    padding: 30px; 
+    border-radius: 15px 15px 15px 15px;
+}
+
+.title{
+    font-size: 12px;
+    margin-bottom: 25px;
+    color: #050302;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.form{
+    width: 100%;
+    margin-top: 50px;;
+}
+
+.label{
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.label > label{
+    width: 300px;
+    font-size: 20px;
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.input{
+    width: 100%;
+    outline: none;
+    border: 1px solid blanchedalmond;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 5px 5px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+
+.input:focus{
+    border: 3px solid black;
+}
+
+.button{
+    width: 100%;
+    margin: 40px 40px 0 40px;
+    padding: 10px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 0;
+    border-radius: 5px;
+    background: black;
+    cursor: pointer;
+    outline: none;
+}
+
+.button:hover{
+    background: blanchedalmond;
+    color: black;
+}
+
+.label:last-child{
+    margin-bottom: 0;
+}
+
+@media (max-width: 480px){
+    .wrapper .form .label{
+    flex-direction: column;
+    align-items: flex-start;
+    }
+    .wrapper .form .label label{
+        margin-bottom: 5px;
+    }
+}
+
+hr{
+    position: relative;
+    border-color: #0f0f0f;
+    margin-top: 8px;;
+}

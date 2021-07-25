@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form</title>
+    <link rel="stylesheet" type="text/css" href="css/register.css">
+    <script type="text/javascript" src="js/userRegistration"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="title">
+        <h1>Registration Form</h1>
+      </div>
+      <div class="form">
+        <form action="/register" method="POST">
+          <div class="label">
+            <label>Name</label>
+            <input type="text" class="input" name="name"placeholder="Enter your Name" required />
+          </div>
+          <div class="label">
+            <label>Email-ID</label>
+            <input type="email" class="input" name="email" placeholder="Enter your Email"required />
+          </div>
+          <div class="label">
+            <label>Phone</label>
+            <input type="number" class="input" name="phone" placeholder="Enter your phone number." required />
+          </div>
+          <div class="label">
+            <label>Password</label>
+            <input
+              type="password"
+              class="input"
+              minlength="8"
+              placeholder="Atleast 8 characters"
+              name="password"
+              required
+            />
+          </div>
+          <div class="label">
+            <label>Designation</label>
+            <select class="input" required name="designation" id="designation"value="Select">
+              <option disabled hidden selected>Select</option>
+            </select>
+          </div>
+          <div class="label">
+            <label>Department</label>
+            <select class="input"required name="department" id="department">
+              <option disabled hidden selected>Select</option>
+            </select>
+          </div>
+          <div class="label">
+            <label>Role</label>
+            <select class="input" required name="role" id="role" >
+              <option disabled hidden selected>Select</option>
+            </select>
+          </div>
+          <div class="label">
+            <button class="button">Register Here</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </body>
+</html>

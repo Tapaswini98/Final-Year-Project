@@ -1,0 +1,49 @@
+const mongoose = require('mongoose');
+
+let userLoginRecordSchema = mongoose.Schema({
+    login_record_id:{
+        type:Number,
+        maxLength:11,
+        unique:true,
+        required:true
+    },
+    login_user_id_fk:{
+        type:Number,
+        maxLength:11,
+        required:true
+    },
+    login_date_time:{
+        type:Date,
+        required:true 
+    },
+    user_active:{
+        type:Number,
+        maxLength:1,
+        required:true 
+    },
+    user_ip:{
+       type:String,
+       maxLength:15,
+       default:null
+    },
+    user_agent:{
+       type:String,
+       maxLength:80,
+       default:null
+    },
+    session_id:{
+        type:String,
+        maxLength:40,
+        required:true
+    },
+    logout_date_time:{
+        type:Date,
+        default:null
+    },
+    logout_reason:{
+        type:String,
+        maxLength:10,
+        default:null
+    }
+})
+module.exports = mongoose.model('UserLoginRecord',userLoginRecordSchema);

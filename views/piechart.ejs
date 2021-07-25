@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard | Live Chart</title>
+
+    <%- include("./partials/header") %>
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+      <%- include("./partials/navbar") %> <%- include("./partials/sidebar") %>
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6" id="dynamicDrop">
+                <select
+                  class="form-control"
+                  id="dynamicOption"
+                  style="display: none"
+                  onchange="selectChart()"
+                ></select>
+                <h1 id="zoneName" style="display: block"></h1>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i>Home</i></a>
+                  </li>
+                  <li class="breadcrumb-item active">DMA LIVE CHART</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-6">
+                <!-- LINE CHART -->
+                <div class="card card-info">
+                  <div class="card-header">
+                    <h3 class="card-title" id="chartHead"></h3>
+
+                    <div class="card-tools">
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-card-widget="collapse"
+                      >
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-card-widget="remove"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="chart" id="chartDiv">
+                      <!-- <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
+                      <!-- <div id="myChart" style="height: 370px; width:100%;"></div> -->
+                      <canvas width="450" id="myChart"></canvas>
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col (LEFT) -->
+              <div class="col-md-6">
+                <!-- DONUT CHART -->
+                <div class="card card-danger">
+                  <div class="card-header">
+                    <h3 class="card-title"></h3>
+
+                    <div class="card-tools">
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-card-widget="collapse"
+                      >
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-card-widget="remove"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <input
+                      type="search"
+                      name="search"
+                      id="search"
+                      placeholder="Search"
+                      style="width: 90%"
+                    />
+                    <span
+                      ><i
+                        class="fas fa-search"
+                        aria-hidden="true"
+                        style="margin-left: -30px"
+                      ></i
+                    ></span>
+
+                    <table>
+                      <tr>
+                        <th>Table Header</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col (RIGHT) -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Add Content Here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <script>
+      let dynamicDrop = document.getElementById("dynamicDrop");
+      let option = document.getElementById("dynamicOption");
+      let role = JSON.parse(sessionStorage.getItem("user")).role;
+      console.log(role);
+      if (role == "ADMIN") {
+        option.style.display = "block";
+        document.getElementById("zoneName").style.display = "none";
+        let sessionData = JSON.parse(
+          JSON.parse(sessionStorage.getItem("user")).plcs
+        );
+        console.log(sessionData);
+        let innerHTML = "";
+        sessionData.forEach((a) => {
+          innerHTML += `<option value="${a.plcId}">${a.location}</option>`;
+        });
+        option.innerHTML = innerHTML;
+      } else {
+        document.getElementById("chartHead").innerText =
+          "LIVE PIE CHART FOR " +
+          JSON.parse(sessionStorage.getItem("user")).location.toUpperCase() +
+          " ZONE";
+        document.getElementById("zoneName").innerText =
+          JSON.parse(sessionStorage.getItem("user")).location.toUpperCase() +
+          " ZONE";
+      }
+    </script>
+    <script>
+      var ctx = document.getElementById("myChart").getContext("2d");
+      function selectChart() {
+        var ctx = document.getElementById("myChart").getContext("2d");
+       
+        document.getElementById("chartHead").innerText =
+          "LIVE ANALYTICAL CHART FOR " +
+          document.getElementById("dynamicOption").value.toUpperCase() +
+          " ZONE";
+        document.getElementById("zoneName").innerText =
+          document.getElementById("dynamicOption").value.toUpperCase() +
+          " ZONE";
+        async function getData() {
+          let d1 = [];
+          let d2 = [];
+          let d3 = [];
+          let plcId = {};
+        // console.log(selectPlcID);
+        if (JSON.parse(sessionStorage.getItem("user")).role == "ADMIN") {
+          plcId = {
+            plcId: document.getElementById("dynamicOption").value,
+          };
+          console.log(plcId);
+        } else {
+          plcId = {
+            plcId: JSON.parse(sessionStorage.getItem("user")).plcId,
+          };
+        }
+        console.log(plcId);
+        // if (selectPlcID == null) {
+        let res = await fetch("http://localhost:3000/zoneplclivedatas", {
+          method: "POST",
+          body: JSON.stringify(plcId),
+          headers: {
+            "Content-type": "application/json",
+          },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+              return data;
+            });
+          res.forEach((b) => {
+            d1.push(parseFloat(b.main_meter_demand_flow));
+          });
+          res.forEach((b) => {
+            d2.push(parseFloat(b.main_meter_flow));
+          });
+          res.forEach((b) => {
+            d3.push(parseFloat(b.esr_presure));
+          });
+          // console.log(d1, d2);
+          return {
+            d1: d1,
+            d2: d2,
+            d3: d3,
+          };
+        }
+
+        const arr = getData().then((value) => {
+          let data1 = value.d1;
+          let data2 = value.d2;
+          var myChart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              labels: ["Volume of Water", "NRW"],
+              datasets: [
+                {
+                  data: [data1.length, data2.length], // Specify the data values array
+
+                  borderColor: ["#2196f38c", "#f443368c"], // Add custom color border
+                  backgroundColor: ["#2196f38c", "#f443368c"], // Add custom color background (Points and Fill)
+                  borderWidth: 1, // Specify bar border width
+                },
+              ],
+            },
+            options: {
+              responsive: true, // Instruct chart js to respond nicely.
+              maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
+            },
+          });
+        });
+        myChart.destroy;
+      }
+      
+      async function getData() {
+        let d1 = [];
+        let d2 = [];
+        let d3 = [];
+        let plcId = {};
+        // console.log(selectPlcID);
+        if (JSON.parse(sessionStorage.getItem("user")).role == "ADMIN") {
+          plcId = {
+            plcId: document.getElementById("dynamicOption").value,
+          };
+          console.log(plcId);
+        } else {
+          plcId = {
+            plcId: JSON.parse(sessionStorage.getItem("user")).plcId,
+          };
+        }
+        console.log(plcId);
+        // if (selectPlcID == null) {
+        let res = await fetch("http://localhost:3000/zoneplclivedatas", {
+          method: "POST",
+          body: JSON.stringify(plcId),
+          headers: {
+            "Content-type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            return data;
+          });
+        res.forEach((b) => {
+          d1.push(parseFloat(b.main_meter_demand_flow));
+        });
+        res.forEach((b) => {
+          d2.push(parseFloat(b.main_meter_flow));
+        });
+        res.forEach((b) => {
+          d3.push(parseFloat(b.esr_presure));
+        });
+        // console.log(d1, d2);
+        return {
+          d1: d1,
+          d2: d2,
+          d3: d3,
+        };
+      }
+      const arr = getData().then((value) => {
+        let data1 = value.d1;
+        let data2 = value.d2;
+        var myChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Volume of Water", "NRW"],
+            datasets: [
+              {
+                data: [data1.length, data2.length], // Specify the data values array
+
+                borderColor: ["#2196f38c", "#f443368c"], // Add custom color border
+                backgroundColor: ["#2196f38c", "#f443368c"], // Add custom color background (Points and Fill)
+                borderWidth: 1, // Specify bar border width
+              },
+            ],
+          },
+          options: {
+            responsive: true, // Instruct chart js to respond nicely.
+            maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height
+          },
+        });
+      });
+    </script>
+
+    <%- include("./partials/footer") %>
+  </body>
+</html>

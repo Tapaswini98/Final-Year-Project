@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Map</title>
+    <script defer
+       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1R6bi0lpM23rnyDggo9UEWMRCCtzd_W0&callback=initMap&libraries=&v=weekly">
+      </script>
+        <style>
+      #map {
+        height: 400px;
+        width: 80%;
+        left: 10%;
+      }
+      h1, button{
+        font-family: 'Times New Roman', Times, serif;
+      }
+      h1{
+        float: left;
+        margin-top: 1%;
+      }
+      button{
+        float: right;
+        background-color: red;
+        padding: 10px;
+        width: 10%;
+        font-size: 20px;
+        border: 0;
+        font-weight: bold;
+        margin-top: 1%;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      // // Initialize and add the map
+      // function initMap() {
+      //   // The location of puri
+      //   const puri = { lat: 19.8135, lng: 85.8312};
+      //   // The map, centered at puri
+      //   const map = new google.maps.Map(document.getElementById("map"), {
+      //     zoom: 4,
+      //     center: puri,
+      //   });
+      //   // The marker, positioned at puri
+      //   const marker = new google.maps.Marker({
+      //     position: puri,
+      //     map: map,
+      //   });
+      // }
+    </script>
+  </head>
+  <body>
+    <div class="logout">
+      <h1>Water supply in Puri, Odisha</h1>
+      <button><a href="/logout">Logout</a></button>
+    </div>
+    <div id="map">
+      <iframe style="width: 100%;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30029.880858795597!2d85.80409032421781!3d19.8088254969761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19c4180256e495%3A0x496a9d8b30c1fad7!2sPuri%2C%20Odisha!5e0!3m2!1sen!2sin!4v1615198103055!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </body>
+</html>
