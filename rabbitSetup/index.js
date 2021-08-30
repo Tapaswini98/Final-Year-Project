@@ -17,7 +17,7 @@ module.exports = {
                 });
                 console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
                 channel.consume(queue, function (msg) {
-                    console.log(" [x] Received ");
+                    console.log(" [x] Received " );
                     //console.log(" [x] Received %s", msg.content.toString());
                     temp = JSON.parse(msg.content.toString());
                     //console.log(JSON.parse(temp.data));
@@ -30,7 +30,7 @@ module.exports = {
                         if (err) {
                             console.log(err);
                         } else {
-                            //console.log(doc)
+                            console.log(doc)
                         }
                     })
 

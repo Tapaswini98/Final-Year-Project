@@ -25,7 +25,7 @@ const masterRoutes = require("./routes/master");
 const plcDevices = require("./routes/plcdevices.route");
 const app = express();
 
-// require('./rabbitSetup/index').config();
+require('./rabbitSetup/index').config();
 
 // cron.schedule('* * * * *', () => {
 //     console.log( "Hi" );

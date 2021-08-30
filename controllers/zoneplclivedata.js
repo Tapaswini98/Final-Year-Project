@@ -39,8 +39,8 @@ const getSQLZonePlcLivedata = (req, res) => {
 
 const postSqlPlcLivedata = async (req, res) => {
   const today = new Date();
-  const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-  const time = today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+  const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
   const finalTime = date + " " + time;
   let insertData = {
     data_id: req.body.data_id,
@@ -82,11 +82,11 @@ const postSqlPlcLivedata = async (req, res) => {
     }
     //console.log(result.OkPacket);
     if (result.affectedRows == 1) {
-      res.send(insertData);    
+      res.send(insertData);
     }
     //res.send(result);
   })
-  
+
   //res.send("Sent");
 }
 
@@ -180,9 +180,19 @@ const getZonePlcLivedata = (req, res) => {
   // const zonePlcData = mongo.aggregation("zone_plc_livedata", query, (err, result) => {
   //   res.send(result);
   // });
-  ZonePlcLivedata.find({ "plc_slno": req.body.plcId }).select("data_id + plc_slno + date_time + esr_presure + esr_outlet_presure + main_meter_flow")
+  const today = new Date;
+  const date = today.getFullYear() + '-' +
+    ((today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1))
+    + '-' + today.getDate();
+  const preDateStart = date + " 00:00:01";
+  const preDateEnd = date + " 23:59:59";
+  // console.log(preDateEnd, preDateStart) , date_time: { "$gte": preDateStart, "$lte": preDateEnd } 
+  ZonePlcLivedata.find({ "plc_slno": req.body.plcId})
+    .select("data_id + plc_slno + date_time + esr_presure + esr_outlet_presure + main_meter_flow + esr_level")
+    .sort({ '_id': -1 })
+    .limit(req.body.limit)
     .then((documents) => {
-      //  console.log(documents);
+      // console.log(documents);
       res.json(documents);
     });
 

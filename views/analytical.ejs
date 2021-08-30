@@ -12,6 +12,7 @@
 
 <body class="hold-transition sidebar-mini">
   <script src="plugins/chart.js/canvasjs.min.js"></script>
+  <script type="text/javascript" src="js/loader.js"></script>
   <div class="wrapper">
     <%- include("./partials/navbar") %>
     <%- include("./partials/sidebar") %>
@@ -96,62 +97,72 @@
   <!-- /.control-sidebar -->
   </div>
   <script>
-    let dynamicDrop = document.getElementById("dynamicDrop")
+    let dynamicDrop = document.getElementById("dynamicDrop");
     let option = document.getElementById("dynamicOption");
-    let role = JSON.parse(sessionStorage.getItem('user')).role
-    console.log(role)
+    let role = JSON.parse(sessionStorage.getItem("user")).role;
     if (role == "ADMIN") {
       option.style.display = "block";
       document.getElementById("zoneName").style.display = "none";
-      let sessionData = JSON.parse(JSON.parse(sessionStorage.getItem('user')).plcs);
+      let sessionData = JSON.parse(
+        JSON.parse(sessionStorage.getItem("user")).plcs
+      );
       console.log(sessionData);
       let innerHTML = "";
       sessionData.forEach((a) => {
-        innerHTML += `<option value="${a.plcId}">${a.location}</option>`
-      })
+        let locationName = a.location.toUpperCase();
+        innerHTML += `<option value="${a.plcId}">LIVE ANALYTICAL CHART FOR ${locationName}</option>`;
+      });
       option.innerHTML = innerHTML;
-
+      setInterval(() => {
+        selectChart();
+      }, 1000);
     } else {
-      document.getElementById("chartHead").innerText = "LIVE ANALYTICAL CHART FOR " + ((JSON.parse(sessionStorage
-        .getItem(
-          "user"))).location).toUpperCase() + " ZONE"
-      document.getElementById("zoneName").innerText = ((JSON.parse(sessionStorage.getItem("user"))).location)
-        .toUpperCase() + " ZONE"
+      document.getElementById("chartHead").innerText =
+        "LIVE ANALYTICAL CHART FOR " +
+        JSON.parse(sessionStorage.getItem("user")).location.toUpperCase() +
+        " ZONE";
+      document.getElementById("zoneName").innerText =
+        JSON.parse(sessionStorage.getItem("user")).location.toUpperCase() +
+        " ZONE";
+
+      setInterval(() => {
+        staticChat();
+      }, 1000);
     }
-  </script>
-  <script>
-    // let selectPlcID = "";
-    // function selectPlcId() {
-    //   selectPlcID = document.getElementById("dynamicOption").value;
-    //   console.log(selectPlcID);
-    //   getData(selectPlcID);
-    // }
-    // console.log(selectPlcID);
+
     function selectChart() {
-      document.getElementById("chartHead").innerText = "LIVE ANALYTICAL CHART FOR " + document.getElementById(
-        "dynamicOption").value.toUpperCase() + " ZONE"
-      document.getElementById("zoneName").innerText = document.getElementById("dynamicOption").value.toUpperCase() +
-        " ZONE"
+      JSON.parse(JSON.parse(sessionStorage.getItem("user")).plcs).forEach(
+        (a) => {
+          if (a.plcId == document.getElementById("dynamicOption").value) {
+            document.getElementById("chartHead").innerText =
+              "LIVE ANALYTICAL CHART FOR " +
+              a.location.toUpperCase() +
+              " ZONE";
+          }
+        }
+      );
       async function getData() {
         let d1 = [];
         let d2 = [];
+        let d3 =[];
         let plcId = {};
         // console.log(selectPlcID);
 
         plcId = {
           plcId: document.getElementById("dynamicOption").value,
-        }
+          limit:250
+        };
         console.log(plcId);
 
         console.log(plcId);
         // if (selectPlcID == null) {
         let res = await fetch("http://localhost:3000/zoneplclivedatas", {
-            method: "POST",
-            body: JSON.stringify(plcId),
-            headers: {
-              "Content-type": "application/json",
-            },
-          })
+          method: "POST",
+          body: JSON.stringify(plcId),
+          headers: {
+            "Content-type": "application/json",
+          },
+        })
           .then((response) => response.json())
           .then((data) => {
             return data;
@@ -169,25 +180,177 @@
           obj.y = parseFloat(b.main_meter_flow);
           d2.push(obj);
         });
-        // console.log(d1, d2);
+        res.forEach((c) => {
+          var obj = {};
+          obj.x = new Date(c.date_time);
+          obj.y = parseFloat(c.esr_level);
+          d3.push(obj);
+        });
+        console.log(d1, d2);
         return {
           d1: d1,
           d2: d2,
+          d3:d3
         };
         // }
       }
       const arr = getData().then((value) => {
         let data1 = value.d1;
         let data2 = value.d2;
+        let data3 = value.d3;
 
-        console.log(data1, data2);
+        var chart = new CanvasJS.Chart("chartContainer", {
+          title: {
+            text: "",
+          },
+          axisY: [
+            {
+              title: "Flow m^3/h",
+              lineColor: "blue",
+              tickColor: "blue",
+              labelFontColor: "blue",
+              titleFontColor: "blue",
+              includeZero: true,
+            },
+          ],
+          axisY2: {
+            title: "Pressure Kg/cm^2 & Level in M",
+            lineColor: "red",
+            tickColor: "red",
+            labelFontColor: "red",
+            titleFontColor: "red",
+            includeZero: true,
+          },
+          toolTip: {
+            shared: true,
+          },
+          legend: {
+            cursor: "pointer",
+            itemclick: toggleDataSeries,
+          },
+          data: [
+            {
+              type: "spline",
+              fillOpacity: .3,
+              name: "Flow",
+              color: "blue",
+              axisYIndex: 0,
+              showInLegend: true,
+              dataPoints: data2,
+              markerType: "none",
+            },
+            {
+              type: "spline",
+              fillOpacity: .3,
+              name: "Pressure",
+              color: "red",
+              axisYType: "secondary",
+              showInLegend: true,
+              dataPoints: data1,
+              markerType: "none",
+            },
+            {
+              type: "spline",
+              fillOpacity: .3,
+              name: "Level",
+              color: "yellow",
+              axisYType: "secondary",
+              showInLegend: true,
+              dataPoints: data3,
+              markerType: "none",
+            },
+          ],
+        });
+
+        chart.render();
+
+        function toggleDataSeries(e) {
+          if (
+            typeof e.dataSeries.visible === "undefined" ||
+            e.dataSeries.visible
+          ) {
+            e.dataSeries.visible = false;
+          } else {
+            e.dataSeries.visible = true;
+          }
+          e.chart.render();
+        }
+      });
+    }
+
+   
+
+    function staticChat() {
+      async function getData() {
+        let d1 = [];
+        let d2 = [];
+        let d3 = [];
+        let plcId = {};
+        // console.log(selectPlcID);
+        if (JSON.parse(sessionStorage.getItem("user")).role == "ADMIN") {
+          plcId = {
+            plcId: document.getElementById("dynamicOption").value,
+            limit: 250
+          };
+          console.log(plcId);
+        } else {
+          plcId = {
+            plcId: JSON.parse(sessionStorage.getItem("user")).plcId,
+            limit: 250
+          };
+        }
+        //console.log(plcId);
+        // if (selectPlcID == null) {
+        let res = await fetch("http://localhost:3000/zoneplclivedatas", {
+            method: "POST",
+            body: JSON.stringify(plcId),
+            headers: {
+              "Content-type": "application/json",
+            },
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            return data;
+          });
+        console.log(res);
+        res.forEach((b) => {
+          var obj = {};
+          obj.x = new Date(b.date_time);
+          obj.y = parseFloat(b.esr_presure);
+          d1.push(obj);
+        });
+        res.forEach((b) => {
+          var obj = {};
+          obj.x = new Date(b.date_time);
+          obj.y = parseFloat(b.main_meter_flow);
+          d2.push(obj);
+        });
+        res.forEach((c) => {
+          var obj = {};
+          obj.x = new Date(c.date_time);
+          obj.y = parseFloat(c.esr_level);
+          d3.push(obj);
+        });
+        // console.log(d1, d2);
+        return {
+          d1: d1,
+          d2: d2,
+          d3: d3
+        };
+        // }
+      }
+
+      const arr = getData().then((value) => {
+        let data1 = value.d1;
+        let data2 = value.d2;
+        let data3 = value.d3;
 
         var chart = new CanvasJS.Chart("chartContainer", {
           title: {
             text: "",
           },
           axisY: [{
-            title: "Flow",
+            title: "Flow m^3/h",
             lineColor: "blue",
             tickColor: "blue",
             labelFontColor: "blue",
@@ -195,7 +358,7 @@
             includeZero: true,
           }, ],
           axisY2: {
-            title: "Pressure",
+            title: "Pressure Kg/cm^2",
             lineColor: "red",
             tickColor: "red",
             labelFontColor: "red",
@@ -210,23 +373,35 @@
             itemclick: toggleDataSeries,
           },
           data: [{
-              type: "line",
-              name: "Flow",
+              type: "spline",
+              name: "Flow m^3/h",
               color: "blue",
               axisYIndex: 0,
               showInLegend: true,
-              dataPoints: data1,
+              dataPoints: data2,
+              markerType: "none",
             },
             {
-              type: "line",
-              name: "Pressure",
+              type: "spline",
+              name: "Pressure Kg/cm^2",
               color: "red",
               axisYType: "secondary",
               showInLegend: true,
-              dataPoints: data2,
+              dataPoints: data1,
+              markerType: "none",
+            },
+            {
+              type: "spline",
+              name: "Level in M",
+              color: "yellow",
+              axisYType: "secondary",
+              showInLegend: true,
+              dataPoints: data3,
+              markerType: "none",
             },
           ],
         });
+
         chart.render();
 
         function toggleDataSeries(e) {
@@ -240,159 +415,8 @@
           }
           e.chart.render();
         }
-
       });
-       //setInterval(getData(),1000);
     }
-    window.onload = function () {
-	var dataPoints = [{y : 10}, {y : 13}, {y : 18}, {y : 20}, {y : 17}];
-	var chart = new CanvasJS.Chart("chartContainer", {
-			// title : {
-			// 	text : "Dynamic Data"
-			// },
-			data : [{
-					type : "spline",
-					dataPoints : dataPoints
-				}
-			]
-		});
-
-	chart.render();
-	
-	var yVal = 15, updateCount = 0;
-	var updateChart = function () {
-
-		yVal = yVal + Math.round(5 + Math.random() * (-5 - 5));
-      	updateCount++;
-		
-		dataPoints.push({
-			y : yVal
-		});
-      	
-        // chart.options.title.text = "Update " + updateCount;
-		chart.render();    
-		
-	};
-
-	// update chart every second
-	setInterval(function(){updateChart()}, 1);
-}	
-    // async function getData() {
-    //   let d1 = [];
-    //   let d2 = [];
-    //   let plcId = {};
-    //   // console.log(selectPlcID);
-    //   if (JSON.parse(sessionStorage.getItem("user")).role == "ADMIN") {
-    //     plcId = {
-    //       plcId: document.getElementById("dynamicOption").value,
-    //     };
-    //     console.log(plcId);
-    //   } else {
-    //     plcId = {
-    //       plcId: JSON.parse(sessionStorage.getItem("user")).plcId,
-    //     };
-    //   }
-    //   console.log(plcId);
-    //   // if (selectPlcID == null) {
-    //   let res = await fetch("http://localhost:3000/zoneplclivedatas", {
-    //       method: "POST",
-    //       body: JSON.stringify(plcId),
-    //       headers: {
-    //         "Content-type": "application/json",
-    //       },
-    //     })
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       return data;
-    //     });
-    //   // console.log(res);
-    //   res.forEach((b) => {
-    //     var obj = {};
-    //     obj.x = new Date(b.date_time);
-    //     obj.y = parseFloat(b.esr_presure);
-    //     d1.push(obj);
-    //   });
-    //   res.forEach((b) => {
-    //     var obj = {};
-    //     obj.x = new Date(b.date_time);
-    //     obj.y = parseFloat(b.main_meter_flow);
-    //     d2.push(obj);
-    //   });
-    //   // console.log(d1, d2);
-    //   return {
-    //     d1: d1,
-    //     d2: d2,
-    //   };
-    //   // }
-    // }
-    // const arr =  getData().then((value) => {
-    //   let data1 = value.d1;
-    //   let data2 = value.d2;
-
-    //   // console.log(data1, data2);
-    //   window.onload = function () {
-    //     var chart = new CanvasJS.Chart("chartContainer", {
-    //       title: {
-    //         text: "",
-    //       },
-    //       axisY: [{
-    //         title: "Flow",
-    //         lineColor: "blue",
-    //         tickColor: "blue",
-    //         labelFontColor: "blue",
-    //         titleFontColor: "blue",
-    //         includeZero: true,
-    //       }, ],
-    //       axisY2: {
-    //         title: "Pressure",
-    //         lineColor: "red",
-    //         tickColor: "red",
-    //         labelFontColor: "red",
-    //         titleFontColor: "red",
-    //         includeZero: true,
-    //       },
-    //       toolTip: {
-    //         shared: true,
-    //       },
-    //       legend: {
-    //         cursor: "pointer",
-    //         itemclick: toggleDataSeries,
-    //       },
-    //       data: [{
-    //           type: "line",
-    //           name: "Flow",
-    //           color: "blue",
-    //           axisYIndex: 0,
-    //           showInLegend: true,
-    //           dataPoints: data1,
-    //         },
-    //         {
-    //           type: "line",
-    //           name: "Pressure",
-    //           color: "red",
-    //           axisYType: "secondary",
-    //           showInLegend: true,
-    //           dataPoints: data2,
-    //         },
-    //       ],
-    //     });
-    //     chart.render();
-
-    //     function toggleDataSeries(e) {
-    //       if (
-    //         typeof e.dataSeries.visible === "undefined" ||
-    //         e.dataSeries.visible
-    //       ) {
-    //         e.dataSeries.visible = false;
-    //       } else {
-    //         e.dataSeries.visible = true;
-    //       }
-    //       e.chart.render();
-    //     }
-    //   };
-    // });
-    //setInterval(getData,1000);
-    //setInterval(function(){updateChart()}, 1000);
   </script>
   <!-- ./wrapper -->
   <%- include("./partials/footer") %>
